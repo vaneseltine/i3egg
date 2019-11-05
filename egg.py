@@ -1,29 +1,56 @@
+"""A very simple timer for i3"""
+import re
 import subprocess
-import time
-import typing as T
 import sys
+import time
 
 FONT = "pango:LuxiMono 18"
 
 
-def get_input_from_i3() -> str:
+def main() -> None:
+    """A very simple timer for i3"""
+    raw_input = input_from_args() or input_from_i3()
+    seconds = parse_seconds(raw_input)
+    print(f"{seconds} sec...")
+    time.sleep(seconds)
+    notify_complete(seconds)
+
+
+def input_from_args():
+    """
+    Get min/sec input from the command line arguments.
+    """
+    args = sys.argv[1:]
+    return " ".join(args)
+
+
+def input_from_i3() -> str:
+    """
+    Get min/sec input from an i3 input box.
+    """
     full_output = subprocess.getoutput(f"i3-input -f {FONT} -P 'Minutes: '")
-    line: str = [s for s in full_output.splitlines() if s.startswith("output")][-1]
-    return line.split(" = ")[-1]
+    input_lines = full_output.splitlines()
+    key_line: str = [s for s in input_lines if s.startswith("output")][-1]
+    return key_line.split(" = ")[-1]
 
 
-def parse_seconds(raw_input: str, divider: str = ":") -> int:
+def parse_seconds(raw_input: str, divider: str = r"[^\d]+") -> int:
+    """
+    Convert a string like '1:30', '3', or '4m3' into seconds (90; 180; 243).
+    """
     try:
         return int(raw_input) * 60
     except ValueError:
         pass
-    mins, secs = [int(x) for x in raw_input.split(divider)]
-    return mins * 60 + secs
+    mins, secs = re.split(divider, raw_input)
+    return int(mins) * 60 + int(secs)
 
 
 def notify_complete(seconds: int) -> None:
+    """
+    Call i3-nagbar to report the end of the timer.
+    """
     minutes, seconds = divmod(seconds, 60)
-    print("DING DING DING")
     subprocess.check_call(
         [
             "i3-nagbar",
@@ -34,15 +61,6 @@ def notify_complete(seconds: int) -> None:
             f"-m i3egg: {minutes}m {seconds}s timer has expired.",
         ]
     )
-
-
-def main() -> None:
-    input_args = " ".join(sys.argv[1:])
-    raw_input = input_args or get_input_from_i3()
-    seconds = parse_seconds(raw_input)
-    print(f"{seconds} sec...")
-    time.sleep(seconds)
-    notify_complete(seconds)
 
 
 if __name__ == "__main__":
