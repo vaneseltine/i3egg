@@ -1,0 +1,7 @@
+black
+flake8
+mypy
+nox
+pylint
+
+-r requirements-test.txt
