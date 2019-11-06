@@ -10,9 +10,6 @@
   <a href="https://codeclimate.com/github/vaneseltine/i3egg">
     <img alt="Maintainability rated at Code Climate" src="https://img.shields.io/codeclimate/maintainability-percentage/vaneseltine/i3egg?style=flat-square">
   </a>
-  <a href="https://circleci.com/gh/vaneseltine/i3egg">
-    <img alt="Builds at CircleCI" src="https://img.shields.io/circleci/build/github/vaneseltine/i3egg?style=flat-square" />
-  </a>
   <a href="https://coveralls.io/github/vaneseltine/i3egg">
     <img alt="Test coverage at Coveralls" src="https://img.shields.io/coveralls/github/vaneseltine/i3egg?style=flat-square" />
   </a>
@@ -29,9 +26,9 @@ It takes input like '0m3' or '4:0' or '15', waits the appointed number of second
 
 - No visible ongoing countdown.
 - No builtin way to stop the timer once it has been started. (See: [kill](https://linux.die.net/man/1/kill).)
-- Requires [i3wm](https://i3wm.org/i3wm) (or at least an implementation of [i3-nagbar](https://build.i3wm.org/docs/i3-nagbar.html)) to function.
+- Requires [i3wm](https://i3wm.org/i3wm) (minimally, an implementation of [i3-nagbar](https://build.i3wm.org/docs/i3-nagbar.html)) to function.
 
-It does one thing, and does it... well...
+It does one thing, and does it... welllll...
 
 ### 🧙‍ Author
 

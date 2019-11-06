@@ -16,17 +16,17 @@ UserInput = str
 
 def main() -> int:
     """An overly simple timer for i3."""
-    if check_cli_only(sys.argv):
+    if check_cli_only():
         return 0
     raw_input = input_from_args() or input_from_i3()
     seconds = parse_seconds(raw_input)
-    print(f"{seconds} sec...")
-    time.sleep(seconds)
+    wait_seconds(seconds)
     notify_complete(seconds)
     return 0
 
 
-def check_cli_only(args: T.List[str]) -> bool:
+def check_cli_only() -> bool:
+    args = sys.argv[1:]
     if "-V" in args or "--version" in args:
         report_version()
         return True
@@ -78,6 +78,11 @@ def parse_seconds(
         pass
     mins, secs = divider.split(raw_input)
     return int(mins or 0) * 60 + int(secs or 0)
+
+
+def wait_seconds(seconds: int) -> None:
+    print(f"{seconds} sec...")
+    time.sleep(seconds)
 
 
 def notify_complete(seconds: int) -> None:
