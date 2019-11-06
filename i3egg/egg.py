@@ -20,9 +20,8 @@ def main() -> int:
         return 0
     raw_input = input_from_args() or input_from_i3()
     seconds = parse_seconds(raw_input)
-    wait_seconds(seconds)
-    notify_complete(seconds)
-    return 0
+    time.sleep(seconds)
+    return notify_complete(seconds)
 
 
 def check_cli_only() -> bool:
@@ -50,8 +49,7 @@ def input_from_args() -> UserInput:
     """
     Get min/sec input from the command line arguments.
     """
-    args = sys.argv[1:]
-    command_line_input: UserInput = " ".join(args)
+    command_line_input: UserInput = " ".join(sys.argv[1:])
     return command_line_input
 
 
@@ -80,12 +78,7 @@ def parse_seconds(
     return int(mins or 0) * 60 + int(secs or 0)
 
 
-def wait_seconds(seconds: int) -> None:
-    print(f"{seconds} sec...")
-    time.sleep(seconds)
-
-
-def notify_complete(seconds: int) -> None:
+def notify_complete(seconds: int) -> int:
     """
     Call i3-nagbar to report the end of the timer.
     """
@@ -100,6 +93,7 @@ def notify_complete(seconds: int) -> None:
             f"-m i3egg: {minutes}m {seconds}s timer has expired.",
         ]
     )
+    return 0
 
 
 if __name__ == "__main__":
