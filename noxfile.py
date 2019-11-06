@@ -1,10 +1,8 @@
 #! /usr/bin/env python3
 """Invoke via `nox` or `python -m nox`"""
 
-import os
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 import nox
@@ -19,18 +17,11 @@ BASIC_COMMANDS = [
 ]
 
 
-IN_CI = os.getenv("CI", "").lower() == "true"
-IN_WINDOWS = sys.platform.startswith("win")
-AT_HOME = not IN_CI and not IN_WINDOWS
-
-
 def supported_pythons(classifiers_in="setup.cfg"):
     """
     In Windows, return None (to create a single using the current interpreter)
     In other contexts, pull all supported Python classifiers from setup.cfg
     """
-    if IN_WINDOWS:
-        return None
     versions = []
     lines = Path(classifiers_in).read_text().splitlines()
     for line in lines:
@@ -136,8 +127,6 @@ def pytest(session):
     session.install("-r", "requirements-test.txt")
     session.install("-e", ".")
     cmd = ["python", "-m", "coverage", "run", "-m", "pytest"]
-    if IN_CI:
-        cmd.append("--junit-xml=build/pytest/results.xml")
     session.run(*cmd)
     session.run("python", "-m", "coverage", "report")
     make_sure_cli_does_not_just_crash(session, cmds=BASIC_COMMANDS)
@@ -161,8 +150,6 @@ def deploy_to_pypi(session):
     if not pypi_needs_new_version():
         session.skip("PyPI already up to date")
     print("Current version is ready to deploy to PyPI.")
-    if not IN_CI:
-        session.skip("Only deploying from CI")
     session.run("python", "setup.py", "sdist", "bdist_wheel")
     session.run("python", "-m", "twine", "upload", "dist/*")
 
@@ -175,8 +162,6 @@ def autopush_repo(session):
     if git_output:
         print(git_output.decode("ascii").rstrip())
         session.skip("Local repo is not clean")
-    if not AT_HOME:
-        session.skip("Only from home")
     subprocess.check_output(["git", "push"])
 
 
