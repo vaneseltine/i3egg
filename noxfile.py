@@ -12,9 +12,6 @@ nox.options.stop_on_first_error = True
 PACKAGE_NAME = "i3egg"
 MODULE_DEFINING_VERSION = "./i3egg/egg.py"
 VERSION_PATTERN = r"(\d+\.\d+\.[0-9a-z_-]+)"
-BASIC_COMMANDS = [
-    " ".join((PACKAGE_NAME, suffix)) for suffix in ("-h", "--help", "-V", "--version")
-]
 
 
 def supported_pythons(classifiers_in="setup.cfg"):
@@ -130,12 +127,6 @@ def pytest(session):
     cmd = ["python", "-m", "coverage", "run", "-m", "pytest"]
     session.run(*cmd)
     session.run("python", "-m", "coverage", "report")
-    make_sure_cli_does_not_just_crash(session, cmds=BASIC_COMMANDS)
-
-
-def make_sure_cli_does_not_just_crash(session, cmds):
-    for cmd in cmds:
-        session.run(*cmd.split(), silent=True)
 
 
 @nox.session(python=False)
