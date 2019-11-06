@@ -3,5 +3,6 @@ flake8
 mypy
 nox
 pylint
+twine
 
 -r requirements-test.txt
